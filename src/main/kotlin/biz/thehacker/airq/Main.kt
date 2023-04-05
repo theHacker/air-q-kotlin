@@ -20,6 +20,9 @@ fun main() {
 //    println("Gracefully shutting down air-Q...")
 //    airQ.shutdown()
 
+//    println("Disabling cloud remote access O.o...")
+//    airQ.cloudRemote = false
+
 //    println("Pinging air-Q...")
 //    println("Ping ${if (airQ.ping()) "OK :-)" else "failed :-("}.")
 //    println()

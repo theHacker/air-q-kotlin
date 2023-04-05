@@ -70,6 +70,15 @@ class AirQ(
 
     val ledTheme = AirQLedTheme()
 
+    var cloudRemote: Boolean
+        get() = config["cloudRemote"] as Boolean
+        set(value) {
+            val configData = mapOf("cloudRemote" to value)
+                .let { objectMapper.writeValueAsString(it) }
+
+            postRequest("/config", configData)
+        }
+
     /**
      * Identifies an air-Q by blinking all its LEDs and returns the device's ID.
      *
