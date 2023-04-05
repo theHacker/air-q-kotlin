@@ -35,6 +35,10 @@ class AirQ(
     val data: Any
         get() = getRequest("/data")
 
+    val log: List<String>
+        get() = getRequest("/log")
+            .let { objectMapper.readValue<List<String>>(it) }
+
     val deviceName: String
         get() {
             val config = getRequest("/config")
