@@ -19,17 +19,16 @@ import kotlin.text.Charsets.UTF_8
 
 class AirQ(
     private val host: String,
-    private val password: String
+    password: String
 ) {
     private val cryptoBlockSize = 16
 
     /** password as AES key */
-    private val secretKey: SecretKey
-        get() = password
-            .padEnd(32, '0')
-            .substring(0, 32)
-            .toByteArray(UTF_8)
-            .let { SecretKeySpec(it, "AES") }
+    private val secretKey: SecretKey = password
+        .padEnd(32, '0')
+        .substring(0, 32)
+        .toByteArray(UTF_8)
+        .let { SecretKeySpec(it, "AES") }
 
     private val objectMapper = jacksonObjectMapper().apply {
         disable(FAIL_ON_UNKNOWN_PROPERTIES)
