@@ -73,6 +73,15 @@ class AirQ(
             postRequest("/config", configData)
         }
 
+    var ntpServer: String
+        get() = config["TimeServer"] as String
+        set(value) {
+            val configData = mapOf("TimeServer" to value)
+                .let { objectMapper.writeValueAsString(it) }
+
+            postRequest("/config", configData)
+        }
+
     /**
      * Identifies an air-Q by blinking all its LEDs and returns the device's ID.
      *

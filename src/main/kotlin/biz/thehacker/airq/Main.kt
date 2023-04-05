@@ -11,6 +11,10 @@ fun main() {
 //    println("Configuring static IP configuration for air-Q...")
 //    airQ.ifconfig.setStatic("192.168.0.42", "255.255.255.0", "192.168.0.1", "192.168.0.5")
 
+//    println("Configuring NTP server for air-Q...")
+//    airQ.ntpServer = "192.168.0.6"
+//    println("NTP server is set to '${airQ.ntpServer}'.")
+
 //    println("Configuring DHCP IP configuration for air-Q...")
 //    airQ.ifconfig.setDHCP()
 
