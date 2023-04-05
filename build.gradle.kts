@@ -10,8 +10,15 @@ repositories {
     mavenCentral()
 }
 
+dependencies {
+    val jacksonVersion = "2.14.2"
+
+    implementation("com.fasterxml.jackson.core:jackson-databind:$jacksonVersion")
+    implementation("com.fasterxml.jackson.module:jackson-module-kotlin:$jacksonVersion")
+}
+
 kotlin {
-    jvmToolchain(8)
+    jvmToolchain(11)
 }
 
 application {
