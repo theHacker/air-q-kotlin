@@ -8,6 +8,12 @@ fun main() {
 
     val airQ = AirQ(host, password)
 
+//    println("Configuring static IP configuration for air-Q...")
+//    airQ.ifconfig.setStatic("192.168.0.42", "255.255.255.0", "192.168.0.1", "192.168.0.5")
+
+//    println("Configuring DHCP IP configuration for air-Q...")
+//    airQ.ifconfig.setDHCP()
+
 //    println("Restarting air-Q...")
 //    airQ.restart()
 

@@ -93,6 +93,8 @@ class AirQ(
         false
     }
 
+    val ifconfig = AirQIfConfig()
+
     fun restart() {
         val configData = mapOf("reset" to true)
             .let { objectMapper.writeValueAsString(it) }
@@ -247,6 +249,66 @@ class AirQ(
 
             postRequest("/config", configData)
         }
+    }
+
+    /**
+     * Provides access to the interface configuration
+     */
+    inner class AirQIfConfig {
+
+        /**
+         * Sets air-Q to a static configuration with [ip], [subnet], [gateway] and [dns].
+         * All addresses must be IPv4 addresses.
+         *
+         * The new configuration is displayed immediately, but is not in effect right away.
+         * air-Q must be [restarted][restart] to take effect.
+         */
+        fun setStatic(ip: String, subnet: String, gateway: String, dns: String) {
+            if (!isIpv4Address(ip)) {
+                throw IllegalArgumentException("Invalid IP address. air-Q only supports IPv4 setup.")
+            }
+            if (!isIpv4Address(subnet)) {
+                throw IllegalArgumentException("Invalid Subnet address. air-Q only supports IPv4 setup.")
+            }
+            if (!isIpv4Address(gateway)) {
+                throw IllegalArgumentException("Invalid Gateway address. air-Q only supports IPv4 setup.")
+            }
+            if (!isIpv4Address(dns)) {
+                throw IllegalArgumentException("Invalid DNS address. air-Q only supports IPv4 setup.")
+            }
+
+            val configData = mapOf(
+                "ifconfig" to mapOf(
+                     "ip" to ip,
+                     "subnet" to subnet,
+                     "gateway" to gateway,
+                     "dns" to dns,
+                ))
+                .let { objectMapper.writeValueAsString(it) }
+
+            postRequest("/config", configData)
+        }
+
+        /**
+         * Sets air-Q to configure itself via DHCP.
+         *
+         * The new configuration is displayed immediately, but is not in effect right away.
+         * air-Q must be [restarted][restart] to take effect.
+         */
+        fun setDHCP() {
+            val configData = mapOf("DeleteKey" to "ifconfig")
+                .let { objectMapper.writeValueAsString(it) }
+
+            postRequest("/config", configData)
+        }
+
+        private fun isIpv4Address(address: String): Boolean =
+            ipv4Address.matchEntire(address) != null
+    }
+
+    companion object {
+        private val numberBetween0And255 = Regex("(2([0-4][0-9]|5[0-5]))|(1[0-9][0-9])|([1-9][0-9])|([0-9])")
+        private val ipv4Address = Regex("((" + numberBetween0And255.pattern + ")\\." + "){3}(" + numberBetween0And255.pattern + ")")
     }
 }
 
