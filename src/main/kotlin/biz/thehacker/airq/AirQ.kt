@@ -35,6 +35,10 @@ class AirQ(
         disable(FAIL_ON_UNKNOWN_PROPERTIES)
     }
 
+    val config: Map<String, Any>
+        get() = getRequest("/config")
+            .let { objectMapper.readValue<Map<String, Any>>(it) }
+
     val data: Any
         get() = getRequest("/data")
 
