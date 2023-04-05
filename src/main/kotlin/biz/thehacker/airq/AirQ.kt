@@ -35,6 +35,22 @@ class AirQ(
     val data: Any
         get() = getRequest("/data")
 
+    /**
+     * Identifies an air-Q by blinking all its LEDs and returns the device's ID.
+     *
+     * Note:
+     * The `/blink` endpoint does not contain encrypted data.
+     * Anybody in the network can let the air-Q blink.
+     */
+    fun blink(): String = Request.get("http://$host/blink")
+        .execute()
+        .returnContent()
+        .asStream()
+        .use { inputStream -> inputStream.readAllBytes() }
+        .let { bytes -> String(bytes, UTF_8) }
+        .let { text -> objectMapper.readValue<AirQJsonResponseIdOnly>(text) }
+        .id
+
     fun ping(): Boolean = try {
         getRequest("/ping")
         true // no error during request -> ping ok
@@ -49,7 +65,7 @@ class AirQ(
         .asStream()
         .use { inputStream -> inputStream.readAllBytes() }
         .let { bytes -> String(bytes, Charsets.US_ASCII) }
-        .let { text -> objectMapper.readValue<AirQJsonResponse>(text) }
+        .let { text -> objectMapper.readValue<AirQJsonResponseWithContent>(text) }
         .content
         .let { encryptedData ->
             try {
@@ -81,6 +97,10 @@ class AirQPasswordWrongException(cause: BadPaddingException) : RuntimeException(
     cause
 )
 
-private data class AirQJsonResponse(
+private data class AirQJsonResponseIdOnly(
+    val id: String
+)
+
+private data class AirQJsonResponseWithContent(
     val content: String
 )

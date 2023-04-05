@@ -14,4 +14,8 @@ fun main() {
 
     println("Getting data from air-Q...")
     println(airQ.data)
+    println()
+
+    println("Letting air-Q's LEDs blink...")
+    println("blink() returned air-Q's ID as '${airQ.blink()}'.")
 }
