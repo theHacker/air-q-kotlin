@@ -18,6 +18,10 @@ fun main() {
 //    println("Configuring DHCP IP configuration for air-Q...")
 //    airQ.ifconfig.setDHCP()
 
+//    println("Configuring air-Q's LED brightness...")
+//    airQ.setLedBrightness(7.0)
+//    airQ.setLedBrightness(6.0, 2.0, LocalTime.of(8, 0)..LocalTime.of(21, 30))
+
 //    println("Restarting air-Q...")
 //    airQ.restart()
 

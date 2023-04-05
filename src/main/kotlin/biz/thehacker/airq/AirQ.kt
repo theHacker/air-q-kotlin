@@ -6,6 +6,11 @@ import com.fasterxml.jackson.module.kotlin.readValue
 import org.apache.hc.client5.http.fluent.Request
 import org.apache.hc.core5.http.ContentType
 import java.security.SecureRandom
+import java.time.LocalDate
+import java.time.LocalTime
+import java.time.ZoneId
+import java.time.format.DateTimeFormatter
+import java.time.temporal.ChronoUnit.MINUTES
 import javax.crypto.BadPaddingException
 import javax.crypto.Cipher
 import javax.crypto.Cipher.DECRYPT_MODE
@@ -81,6 +86,68 @@ class AirQ(
 
             postRequest("/config", configData)
         }
+
+    /**
+     * Sets the brightness of the LEDs to a constant setting,
+     * disabling night mode.
+     *
+     * [brightness] can go from 0 (disabling LEDs total) to 10.
+     * Non-integral numbers don't seem to make a difference.
+     *
+     * The official manual (for air-Q Science customers) says
+     * the range is `2.2` to `20.0`. Doesn't fit for my air-Q Pro.
+     */
+    fun setLedBrightness(brightness: Double) {
+        val configData = mapOf("NightMode" to
+            mapOf(
+                "Activated" to false,
+                "BrightnessDay" to brightness
+            )
+        )
+            .let { objectMapper.writeValueAsString(it) }
+
+        postRequest("/config", configData)
+    }
+
+    /**
+     * Sets the brightness of the LEDs,
+     * enabling different settings between day and night.
+     *
+     * brightness values can go from 0 (disabling LEDs total) to 10.
+     * Non-integral numbers don't seem to make a difference.
+     *
+     * The official manual (for air-Q Science customers) says
+     * the range is `2.2` to `20.0`. Doesn't fit for my air-Q Pro.
+     *
+     * [daytime] is specified in current local time. This method translates it into UTC,
+     * air-Q has a UTC setting only.
+     */
+    fun setLedBrightness(brightnessDay: Double, brightnessNight: Double, daytime: ClosedRange<LocalTime>) {
+        fun timeToAirQ(localTime: LocalTime): String = localTime
+            .atDate(LocalDate.now())
+            .atZone(ZoneId.systemDefault())
+            .toInstant()
+            .atZone(ZoneId.of("UTC"))
+            .toLocalTime()
+            .truncatedTo(MINUTES)
+            .format(DateTimeFormatter.ofPattern("HH:mm"))
+
+        val startDayUTC = timeToAirQ(daytime.start)
+        val startNightUTC = timeToAirQ(daytime.endInclusive)
+
+        val configData = mapOf("NightMode" to
+            mapOf(
+                "Activated" to true,
+                "StartDay" to startDayUTC,
+                "StartNight" to startNightUTC,
+                "BrightnessDay" to brightnessDay,
+                "BrightnessNight" to brightnessNight
+            )
+        )
+            .let { objectMapper.writeValueAsString(it) }
+
+        postRequest("/config", configData)
+    }
 
     /**
      * Identifies an air-Q by blinking all its LEDs and returns the device's ID.
