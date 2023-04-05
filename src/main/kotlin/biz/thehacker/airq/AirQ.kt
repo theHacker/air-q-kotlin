@@ -46,18 +46,13 @@ class AirQ(
             .let { objectMapper.readValue<List<String>>(it) }
 
     var deviceName: String
-        get() {
-            val config = getRequest("/config")
-
-            return objectMapper.readValue<AirQDevicenameConfig>(config)
-                .devicename
-        }
+        get() = config["devicename"] as String
         set(value) {
             if (value.length > 16) {
                 throw IllegalArgumentException("air-Q only allows up to 16 characters for a device's name.")
             }
 
-            val configData = AirQDevicenameConfig(devicename = value)
+            val configData = mapOf("devicename" to value)
                 .let { objectMapper.writeValueAsString(it) }
 
             postRequest("/config", configData)
@@ -91,8 +86,7 @@ class AirQ(
         .asStream()
         .use { inputStream -> inputStream.readAllBytes() }
         .let { bytes -> String(bytes, UTF_8) }
-        .let { text -> objectMapper.readValue<AirQJsonResponseIdOnly>(text) }
-        .id
+        .let { text -> objectMapper.readValue<Map<String, Any>>(text)["id"] as String }
 
     fun ping(): Boolean = try {
         getRequest("/ping")
@@ -172,8 +166,7 @@ class AirQ(
         .asStream()
         .use { inputStream -> inputStream.readAllBytes() }
         .let { bytes -> String(bytes, Charsets.US_ASCII) }
-        .let { text -> objectMapper.readValue<AirQJsonResponseWithContent>(text) }
-        .content
+        .let { text -> objectMapper.readValue<Map<String, Any>>(text)["content"] as String }
         .let { encryptedData ->
             try {
                 decrypt(encryptedData)
@@ -324,16 +317,4 @@ class AirQPasswordWrongException(cause: BadPaddingException) : RuntimeException(
     "Decryption of air-Q data failed. " +
         "This means the provided password for air-Q does not match.",
     cause
-)
-
-private data class AirQJsonResponseIdOnly(
-    val id: String
-)
-
-private data class AirQJsonResponseWithContent(
-    val content: String
-)
-
-private data class AirQDevicenameConfig(
-    val devicename: String
 )
