@@ -217,6 +217,7 @@ class AirQ(
             get() = getLedTheme("right")
             set(value) = setLedTheme("right", value)
 
+        @Suppress("UNCHECKED_CAST")
         private fun getLedTheme(side: String): String {
             val ledTheme = config["ledTheme"] as Map<String, Any>
 
