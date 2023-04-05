@@ -16,6 +16,9 @@ fun main() {
 //    println(AirQConfigFormatter().format(airQ.config))
 //    println()
 
+//    println("Available LED themes:")
+//    println(airQ.availableLedThemes)
+
 //    print("Setting device name...")
 //    airQ.deviceName = "demo-air-q"
 //    println(" done")

@@ -64,6 +64,10 @@ class AirQ(
             postRequest("/config", configData)
         }
 
+    @Suppress("UNCHECKED_CAST")
+    val availableLedThemes: List<String>
+        get() = config["possibleLedTheme"] as List<String>
+
     /**
      * Identifies an air-Q by blinking all its LEDs and returns the device's ID.
      *
