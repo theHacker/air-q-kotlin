@@ -35,6 +35,15 @@ class AirQ(
     val data: Any
         get() = getRequest("/data")
 
+    val deviceName: String
+        get() {
+            val config = getRequest("/config")
+
+            return objectMapper.readTree(config)
+                .get("devicename")
+                .asText()
+        }
+
     /**
      * Identifies an air-Q by blinking all its LEDs and returns the device's ID.
      *
