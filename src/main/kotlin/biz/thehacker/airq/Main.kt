@@ -12,8 +12,9 @@ fun main() {
     println("Ping ${if (airQ.ping()) "OK :-)" else "failed :-("}.")
     println()
 
-    println("Reading air-Q's log...")
-    println(airQ.log)
+    print("Setting device name...")
+    airQ.deviceName = "demo-air-q"
+    println(" done")
     println()
 
     println("Getting device name from air-Q...")
