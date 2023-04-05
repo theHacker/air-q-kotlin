@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.DeserializationFeature.FAIL_ON_UNKNOWN_PRO
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import java.net.URL
+import javax.crypto.BadPaddingException
 import javax.crypto.Cipher
 import javax.crypto.Cipher.DECRYPT_MODE
 import javax.crypto.SecretKey
@@ -49,7 +50,13 @@ class AirQ(
             .let { bytes -> String(bytes, Charsets.US_ASCII) }
             .let { text -> objectMapper.readValue<AirQJsonResponse>(text) }
             .content
-            .let { encryptedData -> decrypt(encryptedData) }
+            .let { encryptedData ->
+                try {
+                    decrypt(encryptedData)
+                } catch (e: BadPaddingException) {
+                    throw AirQPasswordWrongException(e)
+                }
+            }
     }
 
     @OptIn(ExperimentalEncodingApi::class)
@@ -67,6 +74,12 @@ class AirQ(
             .toString(UTF_8)
     }
 }
+
+class AirQPasswordWrongException(cause: BadPaddingException) : RuntimeException(
+    "Decryption of air-Q data failed. " +
+        "This means the provided password for air-Q does not match.",
+    cause
+)
 
 private data class AirQJsonResponse(
     val content: String
