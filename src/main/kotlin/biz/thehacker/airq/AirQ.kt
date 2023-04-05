@@ -68,6 +68,16 @@ class AirQ(
     val availableLedThemes: List<String>
         get() = config["possibleLedTheme"] as List<String>
 
+    @Suppress("UNCHECKED_CAST")
+    val ledTheme: AirQLedTheme
+        get() {
+            val ledTheme = config["ledTheme"] as Map<String, Any>
+            val left = ledTheme["left"] as String
+            val right = ledTheme["right"] as String
+
+            return AirQLedTheme(left, right)
+        }
+
     /**
      * Identifies an air-Q by blinking all its LEDs and returns the device's ID.
      *
@@ -188,6 +198,11 @@ class AirQ(
             .let { Base64.encode(iv.iv + it) }
     }
 }
+
+data class AirQLedTheme(
+    val left: String,
+    val right: String
+)
 
 class AirQPasswordWrongException(cause: BadPaddingException) : RuntimeException(
     "Decryption of air-Q data failed. " +
