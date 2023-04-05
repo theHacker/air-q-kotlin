@@ -100,6 +100,13 @@ class AirQ(
         postRequest("/config", configData)
     }
 
+    fun shutdown() {
+        val configData = mapOf("shutdown" to true)
+            .let { objectMapper.writeValueAsString(it) }
+
+        postRequest("/config", configData)
+    }
+
     private fun getRequest(path: String): String {
         val request = Request.get("http://$host$path")
 

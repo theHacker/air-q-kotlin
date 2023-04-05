@@ -11,6 +11,9 @@ fun main() {
 //    println("Restarting air-Q...")
 //    airQ.restart()
 
+//    println("Gracefully shutting down air-Q...")
+//    airQ.shutdown()
+
 //    println("Pinging air-Q...")
 //    println("Ping ${if (airQ.ping()) "OK :-)" else "failed :-("}.")
 //    println()
