@@ -8,9 +8,9 @@ fun main() {
 
     val airQ = AirQ(host, password)
 
-    println("Pinging air-Q...")
-    println("Ping ${if (airQ.ping()) "OK :-)" else "failed :-("}.")
-    println()
+//    println("Pinging air-Q...")
+//    println("Ping ${if (airQ.ping()) "OK :-)" else "failed :-("}.")
+//    println()
 
 //    println("Getting config from air-Q...")
 //    println(AirQConfigFormatter().format(airQ.config))
