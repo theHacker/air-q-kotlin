@@ -93,6 +93,13 @@ class AirQ(
         false
     }
 
+    fun restart() {
+        val configData = mapOf("reset" to true)
+            .let { objectMapper.writeValueAsString(it) }
+
+        postRequest("/config", configData)
+    }
+
     private fun getRequest(path: String): String {
         val request = Request.get("http://$host$path")
 

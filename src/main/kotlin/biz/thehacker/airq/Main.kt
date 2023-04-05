@@ -8,6 +8,9 @@ fun main() {
 
     val airQ = AirQ(host, password)
 
+//    println("Restarting air-Q...")
+//    airQ.restart()
+
 //    println("Pinging air-Q...")
 //    println("Ping ${if (airQ.ping()) "OK :-)" else "failed :-("}.")
 //    println()
