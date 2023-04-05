@@ -12,19 +12,19 @@ fun main() {
     println("Ping ${if (airQ.ping()) "OK :-)" else "failed :-("}.")
     println()
 
-    print("Setting device name...")
-    airQ.deviceName = "demo-air-q"
-    println(" done")
-    println()
+//    print("Setting device name...")
+//    airQ.deviceName = "demo-air-q"
+//    println(" done")
+//    println()
 
-    println("Getting device name from air-Q...")
-    println("air-Q's name is '${airQ.deviceName}'.")
-    println()
+//    println("Getting device name from air-Q...")
+//    println("air-Q's name is '${airQ.deviceName}'.")
+//    println()
 
-    println("Getting data from air-Q...")
-    println(airQ.data)
-    println()
+//    println("Getting data from air-Q...")
+//    println(airQ.data)
+//    println()
 
-    println("Letting air-Q's LEDs blink...")
-    println("blink() returned air-Q's ID as '${airQ.blink()}'.")
+//    println("Letting air-Q's LEDs blink...")
+//    println("blink() returned air-Q's ID as '${airQ.blink()}'.")
 }
