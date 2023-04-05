@@ -3,7 +3,7 @@ package biz.thehacker.airq
 import com.fasterxml.jackson.databind.DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
-import java.net.URL
+import org.apache.hc.client5.http.fluent.Request
 import javax.crypto.BadPaddingException
 import javax.crypto.Cipher
 import javax.crypto.Cipher.DECRYPT_MODE
@@ -42,22 +42,22 @@ class AirQ(
         false
     }
 
-    private fun getRequest(path: String): String {
-        val url = URL("http://$host$path")
-
-        return url.openStream()
-            .use { inputStream -> inputStream.readAllBytes() }
-            .let { bytes -> String(bytes, Charsets.US_ASCII) }
-            .let { text -> objectMapper.readValue<AirQJsonResponse>(text) }
-            .content
-            .let { encryptedData ->
-                try {
-                    decrypt(encryptedData)
-                } catch (e: BadPaddingException) {
-                    throw AirQPasswordWrongException(e)
-                }
+    private fun getRequest(path: String): String = Request
+        .get("http://$host$path")
+        .execute()
+        .returnContent()
+        .asStream()
+        .use { inputStream -> inputStream.readAllBytes() }
+        .let { bytes -> String(bytes, Charsets.US_ASCII) }
+        .let { text -> objectMapper.readValue<AirQJsonResponse>(text) }
+        .content
+        .let { encryptedData ->
+            try {
+                decrypt(encryptedData)
+            } catch (e: BadPaddingException) {
+                throw AirQPasswordWrongException(e)
             }
-    }
+        }
 
     @OptIn(ExperimentalEncodingApi::class)
     private fun decrypt(encryptedData: String): String {
