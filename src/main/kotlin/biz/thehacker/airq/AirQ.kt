@@ -68,15 +68,7 @@ class AirQ(
     val availableLedThemes: List<String>
         get() = config["possibleLedTheme"] as List<String>
 
-    @Suppress("UNCHECKED_CAST")
-    val ledTheme: AirQLedTheme
-        get() {
-            val ledTheme = config["ledTheme"] as Map<String, Any>
-            val left = ledTheme["left"] as String
-            val right = ledTheme["right"] as String
-
-            return AirQLedTheme(left, right)
-        }
+    val ledTheme = AirQLedTheme()
 
     /**
      * Identifies an air-Q by blinking all its LEDs and returns the device's ID.
@@ -197,12 +189,51 @@ class AirQ(
             }
             .let { Base64.encode(iv.iv + it) }
     }
-}
 
-data class AirQLedTheme(
-    val left: String,
-    val right: String
-)
+    /**
+     * Provides property-based access to both sides of the air-Q's LED theme
+     */
+    inner class AirQLedTheme {
+
+        var left: String
+            get() = getLedTheme("left")
+            set(value) = setLedTheme("left", value)
+
+        var right: String
+            get() = getLedTheme("right")
+            set(value) = setLedTheme("right", value)
+
+        private fun getLedTheme(side: String): String {
+            val ledTheme = config["ledTheme"] as Map<String, Any>
+
+            return ledTheme[side] as String
+        }
+
+        private fun setLedTheme(side: String, ledTheme: String) {
+            if (ledTheme !in availableLedThemes) {
+                throw IllegalArgumentException("air-Q does not support LED theme '$ledTheme'.")
+            }
+
+            /* air-Q does not support setting only one side.
+             * If you do this, the API will answer a misleading error like
+             *
+             * ```
+             * Error: unsupported option for key 'ledTheme' - can be ['standard', 'standard (contrast)', ...]
+             * ```
+             *
+             * Therefore, we first read the other side, so we may set both sides at once.
+             */
+
+            val bothSides = listOf("left", "right")
+                .associateWith { if (side == it) ledTheme else getLedTheme(it) }
+
+            val configData = mapOf("ledTheme" to bothSides)
+                .let { objectMapper.writeValueAsString(it) }
+
+            postRequest("/config", configData)
+        }
+    }
+}
 
 class AirQPasswordWrongException(cause: BadPaddingException) : RuntimeException(
     "Decryption of air-Q data failed. " +

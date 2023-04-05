@@ -22,6 +22,10 @@ fun main() {
 //    println("Getting current LED theme...")
 //    println("Left side is set to " + airQ.ledTheme.left + ".")
 //    println("Right side is set to " + airQ.ledTheme.right + ".")
+//
+//    println("Changing LED theme...")
+//    airQ.ledTheme.left = "VOC"
+//    airQ.ledTheme.right = "CO2"
 
 //    print("Setting device name...")
 //    airQ.deviceName = "demo-air-q"
