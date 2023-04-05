@@ -1,1 +1,1 @@
-rootProject.name = "air-q"
+rootProject.name = "air-q-kotlin"
